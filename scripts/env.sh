@@ -1,0 +1,6 @@
+#!/bin/bash
+
+PROJECT_NAME=two-factor-authentication
+OUTPUT_DIRECTORY=./bin
+SOURCE_FILE=main.go
+BINARY=$OUTPUT_DIRECTORY/$PROJECT_NAME
