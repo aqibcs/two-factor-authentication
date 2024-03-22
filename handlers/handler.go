@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/mail"
 	"strings"
+	"time"
 
 	"github.com/labstack/echo"
 	"github.com/pquerna/otp/totp"
@@ -122,6 +123,12 @@ func (ah *AuthHandler) GenerateOTP(ctx echo.Context) error {
 		return ctx.JSON(StatusInternalServerError, ErrorResponse{Status: "fail", Message: "Failed to generate OTP"})
 	}
 
+	// Generate the OTP code
+	otpCode, err := totp.GenerateCode(key.Secret(), time.Now())
+	if err != nil {
+		return ctx.JSON(StatusInternalServerError, ErrorResponse{Status: "fail", Message: "Failed to generate OTP code"})
+	}
+
 	dataToUpdate := models.User{
 		Otp_secret:   key.Secret(),
 		Otp_auth_url: key.URL(),
@@ -131,6 +138,7 @@ func (ah *AuthHandler) GenerateOTP(ctx echo.Context) error {
 	}
 
 	otpResponse := map[string]interface{}{
+		"otp":        otpCode,
 		"secret_key": key.Secret(),
 		"otp_url":    key.URL(),
 	}
